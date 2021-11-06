@@ -6,8 +6,12 @@
     "dev": "node ace serve --watch",
     "build": "node ace build --production",
     "start": "node server.js",
+    "start:prod": "node ./build/server.js",
     "lint": "eslint . --ext=.ts",
     "format": "prettier --write ."
+  },
+  "engines": {
+    "node": "14.18.0"
   },
   "devDependencies": {
     "@adonisjs/assembler": "^5.0.0",
