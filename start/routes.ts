@@ -10,7 +10,8 @@ Route.group(() => {
   Route.post('register', 'AuthController.register');
   Route.post('login', 'AuthController.login');
   Route.post('forget-password', 'AuthController.forgetPassword');
-  Route.post('update-password', 'AuthController.updatePassword');
+  Route.put('update-password', 'AuthController.updatePassword');
+  // Route.post('update-user/:id', 'UpdateUserInfosController.index');
   Route.group(() => {
     Route.resource('users', 'UsersController').apiOnly();
     Route.get('users/pagination/:page/:limit', 'UsersController.pagination');

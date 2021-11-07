@@ -22,9 +22,21 @@ export default class AuthController {
   }
   public async register({ request, response, auth }: HttpContextContract) {
     const data = request.only(['email', 'password', 'name']);
-    const userExists = await User.findBy('email', data.email);
-    if (userExists) {
-      return response.status(400).send({ errors: [{ message: 'User already exists' }] });
+    const emailExists = await User.findBy('email', data.email);
+    const nameExists = await User.findBy('name', data.name);
+    if (nameExists && emailExists) {
+      return response.send({
+        errors: {
+          email: 'User already exists with this email',
+          name: 'User already exists with this name',
+        },
+      });
+    }
+    if (emailExists) {
+      return response.send({ errors: { email: 'User already exists with this email' } });
+    }
+    if (nameExists) {
+      return response.send({ errors: { name: 'User already exists with this name' } });
     }
     const newUser = await User.create(data);
     const token = await auth.use('userApi').login(newUser, {
@@ -46,7 +58,6 @@ export default class AuthController {
     await user.save();
     //self signed certificate error
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-
     try {
       await Mail.send((message) => {
         message
@@ -55,7 +66,7 @@ export default class AuthController {
           .subject('Procrew Forget password')
           .htmlView('emails/forget_password', { url: Env.get('FRONTEND_URL'), user, token });
       });
-      return 'sent forget password';
+      return { message: 'sent forget password. check your email' };
     } catch (e) {
       console.log(e);
       response.status(400).send(e);
@@ -77,6 +88,7 @@ export default class AuthController {
     if (tokenDuration.days > 2) {
       return response.status(401).send({ message: { error: 'Token expired' } });
     }
+    user.password = data.newPassword;
     user.forget_password_token = null;
     user.forget_password_token_create_at = null;
     await user.save();

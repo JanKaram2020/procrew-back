@@ -6,7 +6,7 @@ for (let i = 1; i < 201; i++) {
   seed.push({
     email: `${i}procew@procrew.com`,
     password: 'secret',
-    name: `${i}procew@procrew.com`,
+    name: `${i}procew`,
   });
 }
 export default class UserSeeder extends BaseSeeder {
